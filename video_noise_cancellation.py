@@ -42,14 +42,17 @@ def paste_audio_into_video(input_video, output_video, denoised_audio):
     print('Audio added with FFmpeg without re-encoding the video.')
 
 def process_video(input_video, output_video):
-    unique_name = str(uuid.uuid4())
-    noisy_audio = extract_audio_from_video(input_video, unique_name)
-    api_key = '452fa4b2d4f7c0736549abd4b61140ff'
-    denoised_audio = clean_audio(noisy_audio, api_key, unique_name)
-    paste_audio_into_video(input_video, output_video, denoised_audio)
-    os.remove(noisy_audio)
-    os.remove(denoised_audio)
-    print("Audio cleaning and video editing completed successfully!")
+    try:
+        unique_name = str(uuid.uuid4())
+        noisy_audio = extract_audio_from_video(input_video, unique_name)
+        api_key = '452fa4b2d4f7c0736549abd4b61140ff'
+        denoised_audio = clean_audio(noisy_audio, api_key, unique_name)
+        paste_audio_into_video(input_video, output_video, denoised_audio)
+        os.remove(noisy_audio)
+        os.remove(denoised_audio)
+        print("Audio cleaning and video editing completed successfully!")
+    except:
+        pass
 
 def main():
     src = input('src: ')
