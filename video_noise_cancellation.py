@@ -52,21 +52,30 @@ def process_video(input_video, output_video):
         os.remove(denoised_audio)
         print("Audio cleaning and video editing completed successfully!")
     except:
-        pass
+        with open('errors.txt','a') as f:
+            f.write(input_video+'*#@'+output_video)
 
 def main():
     src = input('src: ')
     dest = input('dest: ')
 
     all_tasks = []
-    for root, dirs, files in os.walk(src):
-        dest_root = root.replace(src, dest)
-        if not os.path.exists(dest_root):
-            os.makedirs(dest_root)
-        for file in files:
-            input_path = os.path.join(root, file)
-            output_path = os.path.join(dest_root, file)
-            all_tasks.append((input_path, output_path))
+
+    if src.lower()!= 'error':
+        for root, dirs, files in os.walk(src):
+            dest_root = root.replace(src, dest)
+            if not os.path.exists(dest_root):
+                os.makedirs(dest_root)
+            for file in files:
+                input_path = os.path.join(root, file)
+                output_path = os.path.join(dest_root, file)
+                all_tasks.append((input_path, output_path))
+    else:
+        with open('errors.txt','r') as r:
+            for line in r:
+                in_out = line.strip().split('*#@')
+                all_tasks.append((in_out[0],in_out[1]))
+
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         futures = [executor.submit(process_video, task[0], task[1]) for task in all_tasks]
