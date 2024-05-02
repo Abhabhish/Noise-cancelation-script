@@ -57,11 +57,12 @@ def process_video(input_video, output_video):
 
 def main():
     src = input('src: ')
-    dest = input('dest: ')
+    
 
     all_tasks = []
 
     if src.lower()!= 'error':
+        dest = input('dest: ')
         for root, dirs, files in os.walk(src):
             dest_root = root.replace(src, dest)
             if not os.path.exists(dest_root):
