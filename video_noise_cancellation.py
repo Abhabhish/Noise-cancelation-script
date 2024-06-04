@@ -45,32 +45,35 @@ def process_video(input_video, output_video):
     try:
         unique_name = str(uuid.uuid4())
         noisy_audio = extract_audio_from_video(input_video, unique_name)
-        api_key = '452fa4b2d4f7c0736549abd4b61140ff'
+        api_key = '56066936a624e5c650f64c704dc16097'
         denoised_audio = clean_audio(noisy_audio, api_key, unique_name)
         paste_audio_into_video(input_video, output_video, denoised_audio)
         os.remove(noisy_audio)
         os.remove(denoised_audio)
         print("Audio cleaning and video editing completed successfully!")
-    except:
+    except Exception as e:
+        print(e)
+        
         with open('errors.txt','a') as f:
-            f.write(input_video+'*#@'+output_video)
+            f.write(input_video+'*#@'+output_video+'\n')
 
 def main():
     src = input('src: ')
-    
+    dest = input('dest: ')
 
     all_tasks = []
 
     if src.lower()!= 'error':
-        dest = input('dest: ')
         for root, dirs, files in os.walk(src):
             dest_root = root.replace(src, dest)
             if not os.path.exists(dest_root):
                 os.makedirs(dest_root)
             for file in files:
-                input_path = os.path.join(root, file)
-                output_path = os.path.join(dest_root, file)
-                all_tasks.append((input_path, output_path))
+                if file.lower().endswith('.mov') or file.lower().endswith('.mp4'):
+                    
+                    input_path = os.path.join(root, file)
+                    output_path = os.path.join(dest_root, file)
+                    all_tasks.append((input_path, output_path))
     else:
         with open('errors.txt','r') as r:
             for line in r:
@@ -83,5 +86,5 @@ def main():
         for future in concurrent.futures.as_completed(futures):
             future.result()  # This will raise any exceptions caught during the execution of the thread
 
-if __name__ == '__main__':
+if _name_ == '__main__':
     main()
